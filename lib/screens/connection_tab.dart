@@ -9,7 +9,7 @@ class ConnectionTab extends StatefulWidget {
   State<ConnectionTab> createState() => _ConnectionTabState();
 }
 
-class _ConnectionTabState extends State<ConnectionTab> {
+class _ConnectionTabState extends State<ConnectionTab> with AutomaticKeepAliveClientMixin {
   final _urlController = TextEditingController(text: 'ws://localhost:9090');
 
   @override
@@ -19,7 +19,11 @@ class _ConnectionTabState extends State<ConnectionTab> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final service = context.watch<RosbridgeService>();
     final theme = Theme.of(context);
 

@@ -12,7 +12,7 @@ class ServiceTab extends StatefulWidget {
   State<ServiceTab> createState() => _ServiceTabState();
 }
 
-class _ServiceTabState extends State<ServiceTab> {
+class _ServiceTabState extends State<ServiceTab> with AutomaticKeepAliveClientMixin {
   final _serviceController = TextEditingController(text: '/rosapi/get_param');
   final _typeController = TextEditingController(text: 'rosapi/GetParam');
   final _argsController = TextEditingController(text: '{"name": "/rosdistro"}');
@@ -88,7 +88,11 @@ class _ServiceTabState extends State<ServiceTab> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
 
     return Padding(

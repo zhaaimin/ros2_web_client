@@ -12,7 +12,7 @@ class TopicTab extends StatefulWidget {
   State<TopicTab> createState() => _TopicTabState();
 }
 
-class _TopicTabState extends State<TopicTab> {
+class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin {
   final _topicController = TextEditingController(text: '/chatter');
   final _typeController = TextEditingController(text: 'std_msgs/String');
   final _msgController = TextEditingController(text: '{"data": "hello from flutter"}');
@@ -104,7 +104,11 @@ class _TopicTabState extends State<TopicTab> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
 
     return Padding(

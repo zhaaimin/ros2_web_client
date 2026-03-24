@@ -12,7 +12,7 @@ class ActionTab extends StatefulWidget {
   State<ActionTab> createState() => _ActionTabState();
 }
 
-class _ActionTabState extends State<ActionTab> {
+class _ActionTabState extends State<ActionTab> with AutomaticKeepAliveClientMixin {
   final _actionController = TextEditingController(text: '/fibonacci');
   final _typeController = TextEditingController(text: 'action_tutorials_interfaces/action/Fibonacci');
   final _goalController = TextEditingController(text: '{"order": 5}');
@@ -108,7 +108,11 @@ class _ActionTabState extends State<ActionTab> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
 
     return Padding(
