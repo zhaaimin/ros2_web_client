@@ -42,12 +42,13 @@ class _TopicTabState extends State<TopicTab> {
       return;
     }
     service.subscribe(topic, type, (msg) {
+      if (!mounted) return;
       setState(() {
         _receivedMessages.insert(0, {
           'time': DateTime.now().toIso8601String().substring(11, 23),
           'data': msg,
         });
-        if (_receivedMessages.length > 100) _receivedMessages.removeLast();
+        if (_receivedMessages.length > 500) _receivedMessages.removeLast();
       });
     });
     // Save to history
