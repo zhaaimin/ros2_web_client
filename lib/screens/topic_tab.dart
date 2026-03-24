@@ -48,7 +48,7 @@ class _TopicTabState extends State<TopicTab> {
           'time': DateTime.now().toIso8601String().substring(11, 23),
           'data': msg,
         });
-        if (_receivedMessages.length > 500) _receivedMessages.removeLast();
+        if (_receivedMessages.length > 10) _receivedMessages.removeLast();
       });
     });
     // Save to history
