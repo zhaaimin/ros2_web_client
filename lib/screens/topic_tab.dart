@@ -19,6 +19,7 @@ class _TopicTabState extends State<TopicTab> {
   final List<Map<String, dynamic>> _receivedMessages = [];
   bool _subscribed = false;
   String? _subscribedTopic;
+  bool _isPublishMode = false;
 
   @override
   void dispose() {
@@ -163,40 +164,55 @@ class _TopicTabState extends State<TopicTab> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  TextField(
-                    controller: _msgController,
-                    decoration: const InputDecoration(
-                      labelText: '发布消息 (JSON)',
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                    ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 12),
                   Row(
                     children: [
-                      FilledButton.icon(
-                        onPressed: _subscribed ? _unsubscribe : _subscribe,
-                        icon: Icon(_subscribed ? Icons.notifications_off : Icons.notifications_active),
-                        label: Text(_subscribed ? '取消订阅' : '订阅'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _subscribed ? Colors.orange : null,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      FilledButton.icon(
-                        onPressed: _publish,
-                        icon: const Icon(Icons.send),
-                        label: const Text('发布'),
+                      SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment(value: false, label: Text('订阅'), icon: Icon(Icons.notifications_active)),
+                          ButtonSegment(value: true, label: Text('发布'), icon: Icon(Icons.send)),
+                        ],
+                        selected: {_isPublishMode},
+                        onSelectionChanged: (selected) {
+                          setState(() => _isPublishMode = selected.first);
+                        },
                       ),
                       const Spacer(),
-                      TextButton.icon(
-                        onPressed: () => setState(() => _receivedMessages.clear()),
-                        icon: const Icon(Icons.delete_outline, size: 18),
-                        label: const Text('清空'),
-                      ),
+                      if (!_isPublishMode)
+                        TextButton.icon(
+                          onPressed: () => setState(() => _receivedMessages.clear()),
+                          icon: const Icon(Icons.delete_outline, size: 18),
+                          label: const Text('清空'),
+                        ),
                     ],
                   ),
+                  if (_isPublishMode) ...[
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _msgController,
+                      decoration: const InputDecoration(
+                        labelText: '发布消息 (JSON)',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                      maxLines: 3,
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  if (_isPublishMode)
+                    FilledButton.icon(
+                      onPressed: _publish,
+                      icon: const Icon(Icons.send),
+                      label: const Text('发布'),
+                    )
+                  else
+                    FilledButton.icon(
+                      onPressed: _subscribed ? _unsubscribe : _subscribe,
+                      icon: Icon(_subscribed ? Icons.notifications_off : Icons.notifications_active),
+                      label: Text(_subscribed ? '取消订阅' : '订阅'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _subscribed ? Colors.orange : null,
+                      ),
+                    ),
                 ],
               ),
             ),
