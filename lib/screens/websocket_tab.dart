@@ -20,6 +20,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
   StreamSubscription? _subscription;
   bool _connected = false;
   String _statusMessage = '未连接';
+  final List<String> _logs = [];
 
   static const String historyCategory = 'websocket';
 
@@ -39,12 +40,21 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
     }
     _disconnect();
     try {
+      _addLog('开始连接 $url');
       setState(() {
         _statusMessage = '正在连接 $url …';
       });
       final uri = Uri.parse(url);
+      _addLog('解析 URI: $uri');
       _channel = WebSocketChannel.connect(uri);
-      await _channel!.ready;
+      _addLog('等待 WebSocket ready...');
+      await _channel!.ready.timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('连接超时 (10秒)');
+        },
+      );
+      _addLog('连接成功');
 
       setState(() {
         _connected = true;
@@ -54,6 +64,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
       _subscription = _channel!.stream.listen(
         (data) {
           if (!mounted) return;
+          _addLog('← 收到数据 (${data.toString().length} 字符)');
           setState(() {
             _messages.insert(0, _WsMessage(
               direction: _MsgDirection.received,
@@ -65,6 +76,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
         },
         onError: (error) {
           if (!mounted) return;
+          _addLog('错误: $error');
           setState(() {
             _connected = false;
             _statusMessage = '连接错误: $error';
@@ -72,6 +84,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
         },
         onDone: () {
           if (!mounted) return;
+          _addLog('连接关闭');
           setState(() {
             _connected = false;
             _statusMessage = '连接已关闭';
@@ -79,6 +92,12 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
         },
       );
     } catch (e) {
+      _addLog('连接失败: $e');
+      // Clean up on failure
+      _subscription?.cancel();
+      _subscription = null;
+      _channel?.sink.close();
+      _channel = null;
       setState(() {
         _connected = false;
         _statusMessage = '连接失败: $e';
@@ -126,6 +145,14 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
         'msg': msg,
       }),
     );
+  }
+
+  void _addLog(String msg) {
+    final ts = DateTime.now().toIso8601String().substring(11, 23);
+    setState(() {
+      _logs.insert(0, '[$ts] $msg');
+      if (_logs.length > 200) _logs.removeLast();
+    });
   }
 
   void _showSnackBar(String msg) {
@@ -265,6 +292,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
           ),
           const SizedBox(height: 8),
           Expanded(
+            flex: 2,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: _messages.isEmpty
@@ -312,6 +340,46 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
                                 ),
                               ),
                             ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('连接日志 (${_logs.length})', style: theme.textTheme.titleSmall),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () => setState(() => _logs.clear()),
+                icon: const Icon(Icons.delete_outline, size: 16),
+                label: const Text('清空', style: TextStyle(fontSize: 12)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Expanded(
+            flex: 1,
+            child: Card(
+              color: const Color(0xFF1E1E1E),
+              child: _logs.isEmpty
+                  ? const Center(
+                      child: Text('暂无日志', style: TextStyle(color: Colors.white38, fontSize: 12)),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _logs.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 1),
+                          child: Text(
+                            _logs[index],
+                            style: const TextStyle(
+                              fontFamily: 'Menlo',
+                              fontSize: 11,
+                              color: Colors.white70,
+                            ),
                           ),
                         );
                       },
