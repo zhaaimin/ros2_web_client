@@ -213,6 +213,36 @@ class RosbridgeService extends ChangeNotifier {
     if (_statusMessages.length > 50) _statusMessages.removeAt(0);
   }
 
+  /// Unsubscribe from all active topics.
+  void unsubscribeAll() {
+    final topics = _topicCallbacks.keys.toList();
+    for (final topic in topics) {
+      unsubscribe(topic);
+    }
+    _addLog('已取消所有 topic 订阅 (${topics.length} 个)');
+  }
+
+  /// Cancel all pending action goals and clear callbacks.
+  void cancelAllActions() {
+    final pendingCount = _actionResultCompleters.length;
+    _actionFeedbackCallbacks.clear();
+    for (final completer in _actionResultCompleters.values) {
+      if (!completer.isCompleted) {
+        completer.completeError('页面退出，已取消');
+      }
+    }
+    _actionResultCompleters.clear();
+    if (pendingCount > 0) {
+      _addLog('已取消所有待处理 action ($pendingCount 个)');
+    }
+  }
+
+  /// Clean up all subscriptions and pending operations (called when leaving the page).
+  void cleanupAll() {
+    unsubscribeAll();
+    cancelAllActions();
+  }
+
   // ── Services ──────────────────────────────────────────────────────────────
 
   /// Call a ROS service.

@@ -6,8 +6,29 @@ import 'topic_tab.dart';
 import 'service_tab.dart';
 import 'action_tab.dart';
 
-class RosbridgePage extends StatelessWidget {
+class RosbridgePage extends StatefulWidget {
   const RosbridgePage({super.key});
+
+  @override
+  State<RosbridgePage> createState() => _RosbridgePageState();
+}
+
+class _RosbridgePageState extends State<RosbridgePage> {
+  late final RosbridgeService _rosbridgeService;
+
+  @override
+  void initState() {
+    super.initState();
+    _rosbridgeService = context.read<RosbridgeService>();
+  }
+
+  @override
+  void dispose() {
+    // 延迟到微任务中执行，避免在 widget tree 锁定期间调用 notifyListeners
+    final service = _rosbridgeService;
+    Future.microtask(() => service.cleanupAll());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
