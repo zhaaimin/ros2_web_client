@@ -96,7 +96,7 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
     final isConnected = service.state == CcConnectionState.connected;
     final isDisconnected = service.state == CcConnectionState.disconnected;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,8 +272,8 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
             ],
           ),
           const SizedBox(height: 4),
-          Expanded(
-            flex: 2,
+          SizedBox(
+            height: 300,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: service.receivedMessages.isEmpty
@@ -314,8 +314,8 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
             ],
           ),
           const SizedBox(height: 4),
-          Expanded(
-            flex: 1,
+          SizedBox(
+            height: 200,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: service.logs.isEmpty

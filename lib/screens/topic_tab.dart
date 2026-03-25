@@ -111,7 +111,7 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
     super.build(context);
     final theme = Theme.of(context);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +228,8 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Expanded(
+          SizedBox(
+            height: 350,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: _receivedMessages.isEmpty

@@ -169,7 +169,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
     super.build(context);
     final theme = Theme.of(context);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,8 +291,8 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
             ],
           ),
           const SizedBox(height: 8),
-          Expanded(
-            flex: 2,
+          SizedBox(
+            height: 300,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: _messages.isEmpty
@@ -359,8 +359,8 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
             ],
           ),
           const SizedBox(height: 4),
-          Expanded(
-            flex: 1,
+          SizedBox(
+            height: 200,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: _logs.isEmpty

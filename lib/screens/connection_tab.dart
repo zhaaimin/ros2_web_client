@@ -27,7 +27,7 @@ class _ConnectionTabState extends State<ConnectionTab> with AutomaticKeepAliveCl
     final service = context.watch<RosbridgeService>();
     final theme = Theme.of(context);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +111,8 @@ class _ConnectionTabState extends State<ConnectionTab> with AutomaticKeepAliveCl
             ],
           ),
           const SizedBox(height: 8),
-          Expanded(
+          SizedBox(
+            height: 350,
             child: Card(
               color: const Color(0xFF1E1E1E),
               child: Padding(
@@ -126,7 +127,7 @@ class _ConnectionTabState extends State<ConnectionTab> with AutomaticKeepAliveCl
                     final isOutgoing = log.contains('→');
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
-                      child: Text(
+                      child: SelectableText(
                         log,
                         style: TextStyle(
                           fontFamily: 'Menlo',

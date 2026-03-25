@@ -115,7 +115,7 @@ class _ActionTabState extends State<ActionTab> with AutomaticKeepAliveClientMixi
     super.build(context);
     final theme = Theme.of(context);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,8 @@ class _ActionTabState extends State<ActionTab> with AutomaticKeepAliveClientMixi
           ),
           const SizedBox(height: 16),
           // Feedback and Result
-          Expanded(
+          SizedBox(
+            height: 350,
             child: Row(
               children: [
                 // Feedback
