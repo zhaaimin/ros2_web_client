@@ -6,6 +6,7 @@ import 'screens/connection_tab.dart';
 import 'screens/topic_tab.dart';
 import 'screens/service_tab.dart';
 import 'screens/action_tab.dart';
+import 'screens/websocket_tab.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +56,7 @@ class HomePage extends StatelessWidget {
     final connected = context.select<RosbridgeService, bool>((s) => s.connected);
 
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: Row(
@@ -80,6 +81,7 @@ class HomePage extends StatelessWidget {
               Tab(icon: Icon(Icons.topic), text: 'Topic'),
               Tab(icon: Icon(Icons.miscellaneous_services), text: 'Service'),
               Tab(icon: Icon(Icons.rocket_launch), text: 'Action'),
+              Tab(icon: Icon(Icons.electrical_services), text: 'WebSocket'),
             ],
           ),
         ),
@@ -89,6 +91,7 @@ class HomePage extends StatelessWidget {
             TopicTab(),
             ServiceTab(),
             ActionTab(),
+            WebSocketTab(),
           ],
         ),
       ),
