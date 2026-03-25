@@ -7,6 +7,8 @@ import 'screens/topic_tab.dart';
 import 'screens/service_tab.dart';
 import 'screens/action_tab.dart';
 import 'screens/websocket_tab.dart';
+import 'screens/cc_tcp_tab.dart';
+import 'services/cc_tcp_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => RosbridgeService()),
+        ChangeNotifierProvider(create: (_) => CcTcpService()),
         ChangeNotifierProvider.value(value: historyService),
       ],
       child: const RosBridgeApp(),
@@ -56,7 +59,7 @@ class HomePage extends StatelessWidget {
     final connected = context.select<RosbridgeService, bool>((s) => s.connected);
 
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Scaffold(
         appBar: AppBar(
           title: Row(
@@ -82,6 +85,7 @@ class HomePage extends StatelessWidget {
               Tab(icon: Icon(Icons.miscellaneous_services), text: 'Service'),
               Tab(icon: Icon(Icons.rocket_launch), text: 'Action'),
               Tab(icon: Icon(Icons.electrical_services), text: 'WebSocket'),
+              Tab(icon: Icon(Icons.terminal), text: 'CC TCP'),
             ],
           ),
         ),
@@ -92,6 +96,7 @@ class HomePage extends StatelessWidget {
             ServiceTab(),
             ActionTab(),
             WebSocketTab(),
+            CcTcpTab(),
           ],
         ),
       ),
