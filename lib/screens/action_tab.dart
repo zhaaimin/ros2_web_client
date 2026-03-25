@@ -126,59 +126,71 @@ class _ActionTabState extends State<ActionTab> with AutomaticKeepAliveClientMixi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text('Action 测试', style: theme.textTheme.titleMedium),
-                      const Spacer(),
-                      HistorySelector(
-                        category: HistoryService.actionCategory,
-                        onSelect: (fields) {
-                          _actionController.text = fields['action'] ?? '';
-                          _typeController.text = fields['type'] ?? '';
-                          if (fields.containsKey('goal')) {
-                            _goalController.text = fields['goal']!;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  Text('Action 测试', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _actionController,
+                          category: HistoryService.actionCategory,
+                          fieldKey: 'action',
                           decoration: const InputDecoration(
                             labelText: 'Action 名称',
                             hintText: '/fibonacci',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _actionController.text = fields['action'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('goal')) {
+                              _goalController.text = fields['goal']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _typeController,
+                          category: HistoryService.actionCategory,
+                          fieldKey: 'type',
                           decoration: const InputDecoration(
                             labelText: 'Action 类型',
                             hintText: 'action_tutorials_interfaces/action/Fibonacci',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _actionController.text = fields['action'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('goal')) {
+                              _goalController.text = fields['goal']!;
+                            }
+                          },
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  TextField(
+                  HistoryTextField(
                     controller: _goalController,
+                    category: HistoryService.actionCategory,
+                    fieldKey: 'goal',
                     decoration: const InputDecoration(
                       labelText: 'Goal (JSON)',
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
                     maxLines: 3,
+                    onEntrySelected: (fields) {
+                      _actionController.text = fields['action'] ?? '';
+                      _typeController.text = fields['type'] ?? '';
+                      if (fields.containsKey('goal')) {
+                        _goalController.text = fields['goal']!;
+                      }
+                    },
                   ),
                   const SizedBox(height: 12),
                   Row(

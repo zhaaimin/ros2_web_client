@@ -122,48 +122,51 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text('Topic 测试', style: theme.textTheme.titleMedium),
-                      const Spacer(),
-                      HistorySelector(
-                        category: HistoryService.topicCategory,
-                        onSelect: (fields) {
-                          _topicController.text = fields['topic'] ?? '';
-                          _typeController.text = fields['type'] ?? '';
-                          if (fields.containsKey('msg')) {
-                            _msgController.text = fields['msg']!;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  Text('Topic 测试', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         flex: 2,
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _topicController,
+                          category: HistoryService.topicCategory,
+                          fieldKey: 'topic',
                           decoration: const InputDecoration(
                             labelText: 'Topic',
                             hintText: '/chatter',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _topicController.text = fields['topic'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('msg')) {
+                              _msgController.text = fields['msg']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         flex: 2,
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _typeController,
+                          category: HistoryService.topicCategory,
+                          fieldKey: 'type',
                           decoration: const InputDecoration(
                             labelText: '消息类型',
                             hintText: 'std_msgs/String',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _topicController.text = fields['topic'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('msg')) {
+                              _msgController.text = fields['msg']!;
+                            }
+                          },
                         ),
                       ),
                     ],

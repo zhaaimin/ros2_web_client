@@ -22,7 +22,7 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
   String _statusMessage = '未连接';
   final List<String> _logs = [];
 
-  static const String historyCategory = 'websocket';
+  static String get historyCategory => HistoryService.websocketCategory;
 
   @override
   void dispose() {
@@ -181,27 +181,15 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text('WebSocket 测试', style: theme.textTheme.titleMedium),
-                      const Spacer(),
-                      HistorySelector(
-                        category: historyCategory,
-                        onSelect: (fields) {
-                          _urlController.text = fields['url'] ?? '';
-                          if (fields.containsKey('msg')) {
-                            _msgController.text = fields['msg']!;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  Text('WebSocket 测试', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _urlController,
+                          category: historyCategory,
+                          fieldKey: 'url',
                           decoration: const InputDecoration(
                             labelText: 'WebSocket URL',
                             hintText: 'ws://192.168.1.100:8080',
@@ -210,6 +198,12 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
                             isDense: true,
                           ),
                           enabled: !_connected,
+                          onEntrySelected: (fields) {
+                            _urlController.text = fields['url'] ?? '';
+                            if (fields.containsKey('msg')) {
+                              _msgController.text = fields['msg']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -253,8 +247,10 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _msgController,
+                          category: historyCategory,
+                          fieldKey: 'msg',
                           decoration: const InputDecoration(
                             labelText: '发送数据',
                             hintText: '输入要发送的消息',
@@ -264,6 +260,10 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
                           maxLines: 3,
                           minLines: 1,
                           onSubmitted: (_) => _sendMessage(),
+                          onEntrySelected: (fields) {
+                            _urlController.text = fields['url'] ?? '';
+                            _msgController.text = fields['msg'] ?? '';
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),

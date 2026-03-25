@@ -106,59 +106,71 @@ class _ServiceTabState extends State<ServiceTab> with AutomaticKeepAliveClientMi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text('Service 调用', style: theme.textTheme.titleMedium),
-                      const Spacer(),
-                      HistorySelector(
-                        category: HistoryService.serviceCategory,
-                        onSelect: (fields) {
-                          _serviceController.text = fields['service'] ?? '';
-                          _typeController.text = fields['type'] ?? '';
-                          if (fields.containsKey('args')) {
-                            _argsController.text = fields['args']!;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  Text('Service 调用', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _serviceController,
+                          category: HistoryService.serviceCategory,
+                          fieldKey: 'service',
                           decoration: const InputDecoration(
                             labelText: 'Service 名称',
                             hintText: '/rosapi/get_param',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _serviceController.text = fields['service'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('args')) {
+                              _argsController.text = fields['args']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _typeController,
+                          category: HistoryService.serviceCategory,
+                          fieldKey: 'type',
                           decoration: const InputDecoration(
                             labelText: 'Service 类型 (可选)',
                             hintText: 'rosapi/GetParam',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onEntrySelected: (fields) {
+                            _serviceController.text = fields['service'] ?? '';
+                            _typeController.text = fields['type'] ?? '';
+                            if (fields.containsKey('args')) {
+                              _argsController.text = fields['args']!;
+                            }
+                          },
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  TextField(
+                  HistoryTextField(
                     controller: _argsController,
+                    category: HistoryService.serviceCategory,
+                    fieldKey: 'args',
                     decoration: const InputDecoration(
                       labelText: '请求参数 (JSON)',
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
                     maxLines: 3,
+                    onEntrySelected: (fields) {
+                      _serviceController.text = fields['service'] ?? '';
+                      _typeController.text = fields['type'] ?? '';
+                      if (fields.containsKey('args')) {
+                        _argsController.text = fields['args']!;
+                      }
+                    },
                   ),
                   const SizedBox(height: 12),
                   FilledButton.icon(

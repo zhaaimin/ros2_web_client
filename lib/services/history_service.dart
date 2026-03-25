@@ -50,6 +50,8 @@ class HistoryService extends ChangeNotifier {
   static const String topicCategory = 'topic';
   static const String serviceCategory = 'service';
   static const String actionCategory = 'action';
+  static const String websocketCategory = 'websocket';
+  static const String ccTcpCategory = 'cc_tcp';
 
   /// Initialize the service by loading persisted data.
   Future<void> init() async {
@@ -58,7 +60,7 @@ class HistoryService extends ChangeNotifier {
   }
 
   void _loadAll() {
-    for (final category in [topicCategory, serviceCategory, actionCategory]) {
+    for (final category in [topicCategory, serviceCategory, actionCategory, websocketCategory, ccTcpCategory]) {
       _loadCategory(category);
     }
   }

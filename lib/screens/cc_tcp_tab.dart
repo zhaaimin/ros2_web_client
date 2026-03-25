@@ -18,7 +18,7 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
   final _tokenController = TextEditingController();
   final _msgController = TextEditingController();
 
-  static const String historyCategory = 'cc_tcp';
+  static String get historyCategory => HistoryService.ccTcpCategory;
 
   @override
   void dispose() {
@@ -108,30 +108,16 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text('CC TCP 客户端', style: theme.textTheme.titleMedium),
-                      const Spacer(),
-                      HistorySelector(
-                        category: historyCategory,
-                        onSelect: (fields) {
-                          _hostController.text = fields['host'] ?? '';
-                          _portController.text = fields['port'] ?? '';
-                          _apiIdController.text = fields['api_id'] ?? '';
-                          if (fields.containsKey('token')) {
-                            _tokenController.text = fields['token']!;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  Text('CC TCP 客户端', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         flex: 3,
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _hostController,
+                          category: historyCategory,
+                          fieldKey: 'host',
                           decoration: const InputDecoration(
                             labelText: '主机地址',
                             hintText: '192.168.11.3',
@@ -139,21 +125,38 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
                             isDense: true,
                           ),
                           enabled: isDisconnected,
+                          onEntrySelected: (fields) {
+                            _hostController.text = fields['host'] ?? '';
+                            _portController.text = fields['port'] ?? '';
+                            _apiIdController.text = fields['api_id'] ?? '';
+                            if (fields.containsKey('token')) {
+                              _tokenController.text = fields['token']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         flex: 1,
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _portController,
+                          category: historyCategory,
+                          fieldKey: 'port',
                           decoration: const InputDecoration(
                             labelText: '端口',
                             hintText: '51000',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
-                          keyboardType: TextInputType.number,
                           enabled: isDisconnected,
+                          onEntrySelected: (fields) {
+                            _hostController.text = fields['host'] ?? '';
+                            _portController.text = fields['port'] ?? '';
+                            _apiIdController.text = fields['api_id'] ?? '';
+                            if (fields.containsKey('token')) {
+                              _tokenController.text = fields['token']!;
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -162,8 +165,10 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _apiIdController,
+                          category: historyCategory,
+                          fieldKey: 'api_id',
                           decoration: const InputDecoration(
                             labelText: 'API ID',
                             hintText: 'walker.ae',
@@ -171,20 +176,37 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
                             isDense: true,
                           ),
                           enabled: isDisconnected,
+                          onEntrySelected: (fields) {
+                            _hostController.text = fields['host'] ?? '';
+                            _portController.text = fields['port'] ?? '';
+                            _apiIdController.text = fields['api_id'] ?? '';
+                            if (fields.containsKey('token')) {
+                              _tokenController.text = fields['token']!;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: TextField(
+                        child: HistoryTextField(
                           controller: _tokenController,
+                          category: historyCategory,
+                          fieldKey: 'token',
                           decoration: const InputDecoration(
                             labelText: 'Token',
                             hintText: '输入 Token',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
-                          obscureText: true,
                           enabled: isDisconnected,
+                          onEntrySelected: (fields) {
+                            _hostController.text = fields['host'] ?? '';
+                            _portController.text = fields['port'] ?? '';
+                            _apiIdController.text = fields['api_id'] ?? '';
+                            if (fields.containsKey('token')) {
+                              _tokenController.text = fields['token']!;
+                            }
+                          },
                         ),
                       ),
                     ],
