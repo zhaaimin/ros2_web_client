@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/log_export.dart';
 import 'package:provider/provider.dart';
 import '../services/cc_tcp_service.dart';
 import '../services/history_service.dart';
@@ -287,6 +288,11 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
                   style: theme.textTheme.titleSmall),
               const Spacer(),
               TextButton.icon(
+                onPressed: () => LogExport.showExportOptions(context, service.receivedMessages, 'cc_tcp_messages'),
+                icon: const Icon(Icons.ios_share, size: 16),
+                label: const Text('导出', style: TextStyle(fontSize: 12)),
+              ),
+              TextButton.icon(
                 onPressed: () => service.clearMessages(),
                 icon: const Icon(Icons.delete_outline, size: 16),
                 label: const Text('清空', style: TextStyle(fontSize: 12)),
@@ -328,6 +334,11 @@ class _CcTcpTabState extends State<CcTcpTab> with AutomaticKeepAliveClientMixin 
             children: [
               Text('连接日志 (${service.logs.length})', style: theme.textTheme.titleSmall),
               const Spacer(),
+              TextButton.icon(
+                onPressed: () => LogExport.showExportOptions(context, service.logs, 'cc_tcp_logs'),
+                icon: const Icon(Icons.ios_share, size: 16),
+                label: const Text('导出', style: TextStyle(fontSize: 12)),
+              ),
               TextButton.icon(
                 onPressed: () => service.clearLogs(),
                 icon: const Icon(Icons.delete_outline, size: 16),

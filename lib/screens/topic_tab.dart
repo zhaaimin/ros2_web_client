@@ -99,6 +99,47 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
     }
   }
 
+  Future<void> _discoverTopics() async {
+    final service = context.read<RosbridgeService>();
+    if (!service.connected) {
+      _showSnackBar('请先连接服务器');
+      return;
+    }
+    _showSnackBar('正在获取 Topic 列表…');
+    List<String> topics;
+    try {
+      topics = await service.getTopics();
+    } catch (e) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('发现失败'),
+          content: Text('$e'),
+          actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('确定'))],
+        ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    if (topics.isEmpty) {
+      _showSnackBar('未发现可用 Topic');
+      return;
+    }
+    topics.sort();
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (ctx) => _TopicDiscoveryDialog(topics: topics),
+    );
+    if (selected != null && mounted) {
+      _topicController.text = selected;
+      final type = await service.getTopicType(selected);
+      if (type.isNotEmpty && mounted) {
+        _typeController.text = type;
+      }
+    }
+  }
+
   void _showSnackBar(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 2)));
   }
@@ -122,7 +163,17 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Topic 测试', style: theme.textTheme.titleMedium),
+                  Row(
+                    children: [
+                      Text('Topic 测试', style: theme.textTheme.titleMedium),
+                      const Spacer(),
+                      TextButton.icon(
+                        onPressed: _discoverTopics,
+                        icon: const Icon(Icons.search, size: 18),
+                        label: const Text('发现'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -268,6 +319,84 @@ class _TopicTabState extends State<TopicTab> with AutomaticKeepAliveClientMixin 
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TopicDiscoveryDialog extends StatefulWidget {
+  final List<String> topics;
+  const _TopicDiscoveryDialog({required this.topics});
+
+  @override
+  State<_TopicDiscoveryDialog> createState() => _TopicDiscoveryDialogState();
+}
+
+class _TopicDiscoveryDialogState extends State<_TopicDiscoveryDialog> {
+  final _searchController = TextEditingController();
+  List<String> _filtered = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filtered = widget.topics;
+    _searchController.addListener(_onSearch);
+  }
+
+  void _onSearch() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filtered = query.isEmpty
+          ? widget.topics
+          : widget.topics.where((t) => t.toLowerCase().contains(query)).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('可用 Topics (${widget.topics.length})'),
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 400,
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: '搜索 Topic…',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _filtered.isEmpty
+                  ? const Center(child: Text('无匹配结果'))
+                  : ListView.builder(
+                      itemCount: _filtered.length,
+                      itemBuilder: (ctx, i) {
+                        return ListTile(
+                          dense: true,
+                          title: Text(_filtered[i], style: const TextStyle(fontSize: 13)),
+                          leading: const Icon(Icons.topic, size: 18),
+                          onTap: () => Navigator.of(ctx).pop(_filtered[i]),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('取消')),
+      ],
     );
   }
 }

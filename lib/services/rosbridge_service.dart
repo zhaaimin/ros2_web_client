@@ -345,6 +345,82 @@ class RosbridgeService extends ChangeNotifier {
     }
   }
 
+  // ── Discovery (rosapi) ──────────────────────────────────────────────────
+  //
+  // 需要 rosapi 节点运行才能使用自动发现功能：
+  //   ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+  // 或单独启动：
+  //   ros2 run rosapi rosapi_node
+
+  static const _discoveryTimeout = Duration(seconds: 5);
+  static const _rosApiHint = '请确保 rosapi 节点已启动:\n'
+      '  ros2 launch rosbridge_server rosbridge_websocket_launch.xml\n'
+      '或: ros2 run rosapi rosapi_node';
+
+  /// Get all available topics via /rosapi/topics.
+  /// Throws [String] on failure with user-friendly message.
+  Future<List<String>> getTopics() async {
+    try {
+      final result = await callService('/rosapi/topics')
+          .timeout(_discoveryTimeout);
+      final topics = result['topics'];
+      if (topics is List) {
+        return topics.cast<String>();
+      }
+      return [];
+    } on TimeoutException {
+      _addLog('获取 topic 列表超时，rosapi 可能未运行');
+      throw '请求超时，$_rosApiHint';
+    } catch (e) {
+      _addLog('获取 topic 列表失败: $e');
+      throw '获取失败: $e\n\n$_rosApiHint';
+    }
+  }
+
+  /// Get all available services via /rosapi/services.
+  /// Throws [String] on failure with user-friendly message.
+  Future<List<String>> getServices() async {
+    try {
+      final result = await callService('/rosapi/services')
+          .timeout(_discoveryTimeout);
+      final services = result['services'];
+      if (services is List) {
+        return services.cast<String>();
+      }
+      return [];
+    } on TimeoutException {
+      _addLog('获取 service 列表超时，rosapi 可能未运行');
+      throw '请求超时，$_rosApiHint';
+    } catch (e) {
+      _addLog('获取 service 列表失败: $e');
+      throw '获取失败: $e\n\n$_rosApiHint';
+    }
+  }
+
+  /// Get the type of a specific topic via /rosapi/topic_type.
+  Future<String> getTopicType(String topic) async {
+    try {
+      final result = await callService('/rosapi/topic_type', args: {'topic': topic})
+          .timeout(_discoveryTimeout);
+      return result['type'] as String? ?? '';
+    } catch (e) {
+      _addLog('获取 topic 类型失败: $e');
+      return '';
+    }
+  }
+
+  /// Get the type of a specific service via /rosapi/service_type.
+  Future<String> getServiceType(String service) async {
+    try {
+      final result = await callService('/rosapi/service_type', args: {'service': service})
+          .timeout(_discoveryTimeout);
+      return result['type'] as String? ?? '';
+    } catch (e) {
+      _addLog('获取 service 类型失败: $e');
+      return '';
+    }
+  }
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   String _truncate(String s, int maxLen) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../utils/log_export.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../services/history_service.dart';
 import '../widgets/history_selector.dart';
@@ -284,6 +285,19 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
               Text('消息记录 (${_messages.length})', style: theme.textTheme.titleMedium),
               const Spacer(),
               TextButton.icon(
+                onPressed: () => LogExport.showExportOptions(
+                  context,
+                  _messages.map((m) {
+                    final dir = m.direction == _MsgDirection.sent ? '发送' : '收到';
+                    final ts = m.time.toIso8601String().substring(11, 23);
+                    return '[$ts] [$dir] ${m.content}';
+                  }).toList(),
+                  'websocket_messages',
+                ),
+                icon: const Icon(Icons.ios_share, size: 18),
+                label: const Text('导出'),
+              ),
+              TextButton.icon(
                 onPressed: () => setState(() => _messages.clear()),
                 icon: const Icon(Icons.delete_outline, size: 18),
                 label: const Text('清空'),
@@ -351,6 +365,11 @@ class _WebSocketTabState extends State<WebSocketTab> with AutomaticKeepAliveClie
             children: [
               Text('连接日志 (${_logs.length})', style: theme.textTheme.titleSmall),
               const Spacer(),
+              TextButton.icon(
+                onPressed: () => LogExport.showExportOptions(context, _logs, 'websocket_logs'),
+                icon: const Icon(Icons.ios_share, size: 16),
+                label: const Text('导出', style: TextStyle(fontSize: 12)),
+              ),
               TextButton.icon(
                 onPressed: () => setState(() => _logs.clear()),
                 icon: const Icon(Icons.delete_outline, size: 16),

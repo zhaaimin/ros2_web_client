@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/rosbridge_service.dart';
+import '../utils/log_export.dart';
 
 class ConnectionTab extends StatefulWidget {
   const ConnectionTab({super.key});
@@ -103,6 +104,11 @@ class _ConnectionTabState extends State<ConnectionTab> with AutomaticKeepAliveCl
             children: [
               Text('通信日志', style: theme.textTheme.titleMedium),
               const Spacer(),
+              TextButton.icon(
+                onPressed: () => LogExport.showExportOptions(context, service.logs, 'rosbridge'),
+                icon: const Icon(Icons.ios_share, size: 18),
+                label: const Text('导出'),
+              ),
               TextButton.icon(
                 onPressed: () => service.clearLogs(),
                 icon: const Icon(Icons.delete_outline, size: 18),
